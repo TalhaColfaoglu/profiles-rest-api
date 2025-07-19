@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework', #bunları eklemem gerekiyor 
+    'rest_framework.authtoken', 
+    'profiles_api',
 ]
 
 MIDDLEWARE = [
@@ -115,6 +118,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+AUTH_USER_MODEL = 'profiles_api.UserProfile' #"Ey Django, artık User modelin bu değil:django.contrib.auth.models.User değil,benim yazdığım profiles_api.models.UserProfile modelidir."
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
