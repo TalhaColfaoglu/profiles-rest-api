@@ -2,8 +2,11 @@ from rest_framework.views import APIView #➡️ DRF’in temel APIView sınıf�
 from rest_framework.response import Response #➡️ API'den JSON formatında veri döndürmek için kullanılır. Django'nun HttpResponse'una benzer ama DRF'e özel.
 from rest_framework import status
 from rest_framework import viewsets
-from profiles_api import serializers
+from rest_framework.authentication import TokenAuthentication
+from profiles_api import permissions
 
+from profiles_api import serializers
+from profiles_api import models
 
 class HelloApiView(APIView): #➡️ APIView'den türeyen özel bir sınıf tanımladın. Bu senin kendi API endpoint’in olacak. Yani bu sınıf, bir URL adresine bağlanıp cevap verecek.
     """Test API View"""
@@ -100,3 +103,9 @@ class HelloViewSet(viewsets.ViewSet):
         return Response({'http_method': 'DELETE'})
 
         
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handle creating and updating profiles"""
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.UserProfile.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (permissions.UpdateOwnProfile, )
