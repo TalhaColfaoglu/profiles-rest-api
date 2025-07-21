@@ -10,5 +10,6 @@ router.register('profile', views.UserProfileViewSet) #queryset zaten yazdık o y
 
 urlpatterns = [
     path('hello-view/', views.HelloApiView.as_view()),
-    path('', include(router.urls))
+    path('login/', views.UserLoginApiView.as_view()),
+    path('', include(router.urls)),
 ]
