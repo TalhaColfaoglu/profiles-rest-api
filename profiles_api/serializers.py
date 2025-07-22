@@ -30,3 +30,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
         )
 
         return user
+
+class ProfileFeedItemSerializer(serializers.ModelSerializer): #ModelSerializer kullandığın için, modelin alanlarını otomatik olarak alıyor. Elinle tek tek tanımlamıyorsun
+    """Serializes profile feed items"""
+
+    class Meta:
+        model = models.ProfileFeedItem #Hangi modeli kullanıyoruz? → ProfileFeedItem modelini
+        fields = ('id', 'user_profile', 'status_text', 'created_on') #Bu alanlar JSON’a dahil edilecek. Evet, fields kısmını eklemeseydin, Django hangi alanları serialize edeceğini bilemezdi ve hata verirdi. Yani, bir şeyleri serialize etmek istiyorsan hangi alanları dahil etmek istediğini yazmalısın.
+        extra_kwargs = {'user_profile': {'read_only': True}} #user_profile alanını sadece okumaya izin ver, yani kullanıcı bu alanı post, put, patch ile değiştiremesin. fields = (...) ile alanları belirtiyorsun, ama her alanın tek tek özelliklerini ayarlamak için extra_kwargs kullanman gerekiyor.

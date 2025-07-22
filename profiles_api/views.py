@@ -7,6 +7,7 @@ from profiles_api import permissions
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.permissions import IsAuthenticated
 
 from profiles_api import serializers
 from profiles_api import models
@@ -118,3 +119,25 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 class UserLoginApiView(ObtainAuthToken):
     """Handling creating user authentication tokens"""
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+class UserProfileFeedViewSet(viewsets.ModelViewSet):
+     """Handles creating, reading and updating profile feed items"""
+     authentication_classes = (TokenAuthentication, )
+     serializer_class = serializers.ProfileFeedItemSerializer
+     queryset = models.ProfileFeedItem.objects.all() #Veritabanından hangi verileri kullanacağını söyler
+     permission_classes = (
+         permissions.UpdateOwnStatus, #Kendi objesi mi?
+         IsAuthenticated #Giriş yapmış mı?
+     )
+
+     def perform_create(self, serializer): #Bu özel bir fonksiyon. ModelViewSet bir şey oluştururken (POST) bu fonksiyonu çalıştırır. Yani aşağıdaki satırı çalıştırır
+         """Sets the user profile to the logged in user"""
+         serializer.save(user_profile=self.request.user) #"Yeni bir veri kaydederken, hangi kullanıcı giriş yaptıysa, onun adını otomatik olarak bu veriye yaz."
+         # Sen uygulamaya Talha olarak giriş yaptın ve bir feed (gönderi) oluşturdun:
+        # {
+        #   "status_text": "Bugün göğüs günü çalıştım"
+        # }
+        # Ama bu JSON’un içinde "bu mesajı kim yazdı?" bilgisi yok.
+        # Bu satır diyor ki:
+        # self.request.user → şu an giriş yapmış kullanıcı
+        # user_profile=... → veritabanında bu feed kime ait olacak?
